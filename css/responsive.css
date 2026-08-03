@@ -1,0 +1,331 @@
+@media (max-width: 64rem) {
+    .quiz-header {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: var(--spacing-4);
+    }
+
+    .quiz-student {
+        display: none;
+    }
+
+    .quiz-progress {
+        grid-column: 2;
+    }
+
+    .quiz-header .button {
+        grid-column: 3;
+    }
+}
+
+@media (max-width: 48rem) {
+    :root {
+        --header-height: 4.5rem;
+        --sticky-action-height: 5.75rem;
+    }
+
+    .setup-header {
+        padding-inline: var(--spacing-4);
+    }
+
+    .setup-content,
+    .setup-content--narrow {
+        width: min(100% - 2rem,
+                var(--content-width));
+        padding-block: var(--spacing-8);
+    }
+
+    .setup-content--narrow {
+        max-width: var(--content-width-narrow);
+    }
+
+    .brand-button {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+
+    .selection-card {
+        min-height: 4.5rem;
+    }
+
+    .selection-card--text {
+        min-height: 7rem;
+    }
+
+    .quiz-header {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: var(--spacing-3);
+        padding-inline: var(--spacing-4);
+    }
+
+    .quiz-logo {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .quiz-progress-details {
+        font-size: var(--font-size-xs);
+    }
+
+    .quiz-main {
+        width: min(100% - 2rem, var(--quiz-width));
+        padding-block: var(--spacing-6);
+    }
+
+    .quiz-card {
+        gap: var(--spacing-5);
+        border-radius: var(--radius-lg);
+    }
+
+    .quiz-question {
+        font-size: clamp(1.8rem, 7vw, 3rem);
+    }
+
+    .answer-option {
+        min-height: 4.75rem;
+    }
+
+    .summary-card,
+    .results-card {
+        border-radius: var(--radius-lg);
+    }
+}
+
+@media (max-width: 40rem) {
+    .welcome-content {
+        gap: var(--spacing-4);
+        padding-inline: var(--spacing-4);
+    }
+
+    .welcome-logo {
+        width: 8rem;
+    }
+
+    .selection-grid--two {
+        grid-template-columns: 1fr;
+    }
+
+    .selection-card--text {
+        min-height: 5.5rem;
+    }
+
+    .confirmation-row,
+    .result-detail {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-1);
+    }
+
+    .confirmation-row dd,
+    .result-detail dd {
+        text-align: left;
+    }
+
+    .quiz-header {
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+    }
+
+    .quiz-progress {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .quiz-header .button {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+    }
+
+    .answer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-3);
+    }
+
+    .answer-option {
+        min-height: 4.5rem;
+    }
+
+    .summary-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .results-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .results-actions .button:last-child {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 30rem) {
+
+    .setup-content,
+    .setup-content--narrow {
+        width: calc(100% - 1.5rem);
+        padding-block: var(--spacing-6);
+    }
+
+    .setup-header {
+        padding-inline: var(--spacing-3);
+    }
+
+    .sticky-action {
+        padding-inline: var(--spacing-3);
+    }
+
+    .button {
+        min-height: 3rem;
+        padding-inline: 1rem;
+    }
+
+    .button--large {
+        min-height: 3.6rem;
+    }
+
+    .screen-title {
+        font-size: clamp(1.7rem, 9vw, 2.2rem);
+    }
+
+    .heading-group {
+        margin-bottom: var(--spacing-6);
+    }
+
+    .text-input {
+        min-height: 3.75rem;
+    }
+
+    .accordion-trigger {
+        min-height: 4.25rem;
+        padding-inline: var(--spacing-4);
+    }
+
+    .accordion-panel {
+        padding-inline: var(--spacing-3);
+        padding-bottom: var(--spacing-3);
+    }
+
+    .lesson-group-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--spacing-2);
+    }
+
+    .quiz-header {
+        padding-inline: var(--spacing-3);
+    }
+
+    .quiz-logo {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .quiz-main {
+        width: calc(100% - 1rem);
+        padding-block: var(--spacing-3);
+    }
+
+    .quiz-card {
+        gap: var(--spacing-4);
+        padding: var(--spacing-4);
+    }
+
+    .quiz-question {
+        font-size: clamp(1.65rem, 9vw, 2.5rem);
+    }
+
+    .answer-option {
+        padding: var(--spacing-3);
+    }
+
+    .answer-index {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+
+    .screen--centered,
+    .screen--results {
+        padding-inline: var(--spacing-2);
+    }
+
+    .summary-card,
+    .results-card {
+        gap: var(--spacing-5);
+        padding: var(--spacing-5) var(--spacing-4);
+    }
+
+    .score-ring {
+        width: min(13rem, 72vw);
+    }
+
+    .dialog-content {
+        padding: var(--spacing-6) var(--spacing-4);
+    }
+
+    .dialog-content .button-group {
+        flex-direction: column;
+    }
+}
+
+@media (hover: none) {
+
+    .button:not(:disabled):hover,
+    .selection-card:hover,
+    .lesson-group-card:hover,
+    .answer-option:not(:disabled):hover {
+        transform: none;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 34rem) {
+    .welcome-content {
+        grid-template-columns: auto minmax(0, 1fr);
+        justify-items: start;
+        gap: var(--spacing-4) var(--spacing-8);
+        text-align: left;
+    }
+
+    .welcome-logo {
+        grid-row: 1 / 4;
+        align-self: center;
+        width: 7rem;
+    }
+
+    .welcome-eyebrow,
+    .welcome-title,
+    .welcome-content .button {
+        grid-column: 2;
+    }
+
+    .welcome-title {
+        max-width: 18ch;
+        font-size: clamp(2rem, 7vw, 3.5rem);
+    }
+
+    .quiz-main {
+        min-height: auto;
+        padding-block: var(--spacing-4);
+    }
+
+    .quiz-card {
+        gap: var(--spacing-4);
+    }
+
+    .quiz-question {
+        font-size: clamp(1.75rem, 6vw, 2.7rem);
+    }
+
+    .answer-option {
+        min-height: 4rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .score-ring.is-gentle-pulse {
+        animation: none;
+    }
+
+    .confetti-piece,
+    .sparkle {
+        display: none;
+    }
+}

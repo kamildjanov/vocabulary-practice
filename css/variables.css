@@ -1,0 +1,118 @@
+:root {
+    color-scheme: light;
+
+    --color-brand: #e30613;
+    --color-brand-dark: #b7000b;
+    --color-brand-deep: #8f0009;
+    --color-brand-soft: #fff0f1;
+    --color-brand-faint: #fff7f8;
+
+    --color-white: #ffffff;
+    --color-background: #f5f6f8;
+    --color-surface: #ffffff;
+    --color-surface-muted: #f0f2f5;
+    --color-border: #dfe3e8;
+    --color-border-strong: #c7cdd4;
+
+    --color-text: #17191c;
+    --color-text-soft: #545b64;
+    --color-text-muted: #737b86;
+    --color-disabled: #aeb4bc;
+
+    --color-success: #168447;
+    --color-success-dark: #0f6335;
+    --color-success-soft: #eaf8f0;
+
+    --color-error: #c62828;
+    --color-error-dark: #941d1d;
+    --color-error-soft: #fff0f0;
+
+    --color-warning: #a86100;
+    --color-warning-soft: #fff6df;
+
+    --font-family:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-md: 1.125rem;
+    --font-size-lg: 1.375rem;
+    --font-size-xl: clamp(1.75rem, 4vw, 2.5rem);
+    --font-size-2xl: clamp(2.25rem, 7vw, 4.75rem);
+
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-black: 800;
+
+    --line-height-tight: 1.1;
+    --line-height-heading: 1.2;
+    --line-height-body: 1.6;
+
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.25rem;
+    --spacing-6: 1.5rem;
+    --spacing-8: 2rem;
+    --spacing-10: 2.5rem;
+    --spacing-12: 3rem;
+    --spacing-16: 4rem;
+    --spacing-20: 5rem;
+
+    --radius-sm: 0.5rem;
+    --radius-md: 0.875rem;
+    --radius-lg: 1.25rem;
+    --radius-xl: 1.75rem;
+    --radius-pill: 999px;
+
+    --shadow-sm:
+        0 1px 2px rgb(17 24 39 / 0.06),
+        0 1px 4px rgb(17 24 39 / 0.04);
+
+    --shadow-md:
+        0 8px 24px rgb(17 24 39 / 0.08),
+        0 2px 8px rgb(17 24 39 / 0.05);
+
+    --shadow-lg:
+        0 18px 48px rgb(17 24 39 / 0.12),
+        0 6px 18px rgb(17 24 39 / 0.07);
+
+    --shadow-brand:
+        0 12px 30px rgb(227 6 19 / 0.24);
+
+    --transition-fast: 140ms ease;
+    --transition-base: 220ms ease;
+    --transition-slow: 420ms ease;
+
+    --focus-ring:
+        0 0 0 3px rgb(227 6 19 / 0.24);
+
+    --content-width: 72rem;
+    --content-width-narrow: 42rem;
+    --quiz-width: 64rem;
+
+    --header-height: 5rem;
+    --sticky-action-height: 6.5rem;
+
+    --layer-base: 0;
+    --layer-sticky: 20;
+    --layer-dialog: 100;
+    --layer-effects: 110;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --transition-fast: 0ms;
+        --transition-base: 0ms;
+        --transition-slow: 0ms;
+    }
+}

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+        content="A responsive English vocabulary practice application with Uzbek and Russian translations.">
+    <meta name="theme-color" content="#e30613">
+
+    <title>Vocabulary Practice</title>
+
+    <link rel="icon" href="./assets/images/logo.png">
+    <link rel="stylesheet" href="./css/variables.css">
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/screens.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+</head>
+
+<body>
+    <main id="app" class="app">
+        <section id="screen-welcome" class="screen screen--welcome is-active" data-screen="welcome"
+            aria-labelledby="welcome-title">
+            <div class="welcome-accent welcome-accent--top" aria-hidden="true"></div>
+            <div class="welcome-accent welcome-accent--bottom" aria-hidden="true"></div>
+
+            <div class="welcome-content">
+                <img class="welcome-logo" src="./assets/images/logo.png" alt="Result">
+
+                <p class="welcome-eyebrow">Vocabulary Practice</p>
+
+                <h1 id="welcome-title" class="welcome-title">
+                    Welcome! Ready to practice?
+                </h1>
+
+                <button id="welcome-start" class="button button--large button--white" type="button">
+                    Start Learning
+                </button>
+            </div>
+        </section>
+
+        <section id="screen-name" class="screen screen--setup" data-screen="name" aria-labelledby="name-title" hidden>
+            <header class="setup-header">
+                <button id="name-home" class="brand-button" type="button" aria-label="Return to the welcome screen">
+                    <img class="brand-logo" src="./assets/images/logo.png" alt="">
+                </button>
+            </header>
+
+            <div class="setup-content setup-content--narrow">
+                <div class="heading-group">
+                    <p class="screen-kicker">Let’s get started</p>
+                    <h1 id="name-title" class="screen-title">
+                        What’s your name?
+                    </h1>
+                    <p class="screen-description">
+                        Enter at least two characters to continue.
+                    </p>
+                </div>
+
+                <form id="name-form" class="name-form" novalidate>
+                    <div class="field-group">
+                        <label class="field-label" for="student-name">
+                            Your name
+                        </label>
+
+                        <input id="student-name" class="text-input" name="studentName" type="text" minlength="2"
+                            maxlength="60" autocomplete="name" enterkeyhint="next" aria-describedby="name-error"
+                            required>
+
+                        <p id="name-error" class="field-error" role="alert" aria-live="polite"></p>
+                    </div>
+
+                    <button id="name-continue" class="button button--primary button--wide" type="submit" disabled>
+                        Continue
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="screen-language" class="screen screen--setup" data-screen="language"
+            aria-labelledby="language-title" hidden>
+            <header class="setup-header">
+                <button id="language-home" class="brand-button" type="button" aria-label="Return to the welcome screen">
+                    <img class="brand-logo" src="./assets/images/logo.png" alt="">
+                </button>
+
+                <button id="language-back" class="button button--ghost button--compact" type="button">
+                    Back
+                </button>
+            </header>
+
+            <div class="setup-content">
+                <div class="heading-group">
+                    <p class="screen-kicker">Translation</p>
+                    <h1 id="language-title" class="screen-title">
+                        Choose your language
+                    </h1>
+                    <p class="screen-description">
+                        Vocabulary questions will use this translation.
+                    </p>
+                </div>
+
+                <div id="language-options" class="selection-grid selection-grid--two" role="radiogroup"
+                    aria-label="Translation language">
+                    <button class="selection-card selection-card--text" type="button" role="radio" aria-checked="false"
+                        data-language="uzbek">
+                        Uzbek
+                    </button>
+
+                    <button class="selection-card selection-card--text" type="button" role="radio" aria-checked="false"
+                        data-language="russian">
+                        Russian
+                    </button>
+                </div>
+            </div>
+
+            <footer class="sticky-action">
+                <button id="language-continue" class="button button--primary button--wide" type="button" disabled>
+                    Continue
+                </button>
+            </footer>
+        </section>
+
+        <section id="screen-level" class="screen screen--setup" data-screen="level" aria-labelledby="level-title"
+            hidden>
+            <header class="setup-header">
+                <button id="level-home" class="brand-button" type="button" aria-label="Return to the welcome screen">
+                    <img class="brand-logo" src="./assets/images/logo.png" alt="">
+                </button>
+
+                <button id="level-back" class="button button--ghost button--compact" type="button">
+                    Back
+                </button>
+            </header>
+
+            <div class="setup-content setup-content--scrollable">
+                <div class="heading-group">
+                    <p class="screen-kicker">Course level</p>
+                    <h1 id="level-title" class="screen-title">
+                        Choose your level
+                    </h1>
+                </div>
+
+                <div id="level-options" class="selection-list" role="radiogroup" aria-label="English level"></div>
+            </div>
+
+            <footer class="sticky-action">
+                <button id="level-continue" class="button button--primary button--wide" type="button" disabled>
+                    Continue
+                </button>
+            </footer>
+        </section>
+
+        <section id="screen-unit" class="screen screen--setup" data-screen="unit" aria-labelledby="unit-title" hidden>
+            <header class="setup-header">
+                <button id="unit-home" class="brand-button" type="button" aria-label="Return to the welcome screen">
+                    <img class="brand-logo" src="./assets/images/logo.png" alt="">
+                </button>
+
+                <button id="unit-back" class="button button--ghost button--compact" type="button">
+                    Back
+                </button>
+            </header>
+
+            <div class="setup-content setup-content--scrollable">
+                <div class="heading-group">
+                    <p id="unit-level-name" class="screen-kicker"></p>
+                    <h1 id="unit-title" class="screen-title">
+                        Choose a unit
+                    </h1>
+                    <p class="screen-description">
+                        Open a unit and select one lesson group.
+                    </p>
+                </div>
+
+                <div id="unit-loading" class="status-panel" role="status" aria-live="polite" hidden>
+                    Loading vocabulary…
+                </div>
+
+                <div id="unit-error" class="status-panel status-panel--error" role="alert" hidden></div>
+
+                <div id="unit-accordion" class="accordion" aria-label="Available units"></div>
+            </div>
+
+            <footer class="sticky-action">
+                <button id="unit-continue" class="button button--primary button--wide" type="button" disabled>
+                    Continue
+                </button>
+            </footer>
+        </section>
+
+        <section id="screen-confirmation" class="screen screen--setup" data-screen="confirmation"
+            aria-labelledby="confirmation-title" hidden>
+            <header class="setup-header">
+                <button id="confirmation-home" class="brand-button" type="button"
+                    aria-label="Return to the welcome screen">
+                    <img class="brand-logo" src="./assets/images/logo.png" alt="">
+                </button>
+            </header>
+
+            <div class="setup-content setup-content--narrow">
+                <div class="heading-group">
+                    <p class="screen-kicker">Ready to begin</p>
+                    <h1 id="confirmation-title" class="screen-title">
+                        Check your quiz
+                    </h1>
+                </div>
+
+                <dl class="confirmation-card">
+                    <div class="confirmation-row">
+                        <dt>Student</dt>
+                        <dd id="confirmation-name"></dd>
+                    </div>
+
+                    <div class="confirmation-row">
+                        <dt>Translation</dt>
+                        <dd id="confirmation-language"></dd>
+                    </div>
+
+                    <div class="confirmation-row">
+                        <dt>Level</dt>
+                        <dd id="confirmation-level"></dd>
+                    </div>
+
+                    <div class="confirmation-row">
+                        <dt>Lesson group</dt>
+                        <dd id="confirmation-group"></dd>
+                    </div>
+
+                    <div class="confirmation-row">
+                        <dt>Questions</dt>
+                        <dd id="confirmation-count"></dd>
+                    </div>
+                </dl>
+
+                <div class="button-group">
+                    <button id="confirmation-back" class="button button--secondary" type="button">
+                        Back
+                    </button>
+
+                    <button id="quiz-start" class="button button--primary" type="button">
+                        Start Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-quiz" class="screen screen--quiz" data-screen="quiz" aria-labelledby="quiz-question" hidden>
+            <header class="quiz-header">
+                <img class="quiz-logo" src="./assets/images/logo.png" alt="Result">
+
+                <div class="quiz-student">
+                    <span class="quiz-student-label">Student</span>
+                    <strong id="quiz-student-name"></strong>
+                </div>
+
+                <div class="quiz-progress">
+                    <div class="quiz-progress-details">
+                        <span id="quiz-mode-label">Quiz</span>
+                        <span id="quiz-progress-text"></span>
+                    </div>
+
+                    <div id="quiz-progress-track" class="progress-track" role="progressbar" aria-label="Quiz progress"
+                        aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div id="quiz-progress-bar" class="progress-bar"></div>
+                    </div>
+
+                    <p id="review-remaining" class="review-remaining" aria-live="polite" hidden></p>
+                </div>
+
+                <button id="quiz-exit" class="button button--danger-outline button--compact" type="button">
+                    Exit Quiz
+                </button>
+            </header>
+
+            <div class="quiz-main">
+                <article class="quiz-card">
+                    <p id="quiz-direction" class="direction-label"></p>
+
+                    <h1 id="quiz-question" class="quiz-question"></h1>
+
+                    <div id="quiz-answers" class="answer-grid" role="group" aria-label="Answer choices"></div>
+
+                    <div id="quiz-feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true"></div>
+
+                    <button id="quiz-next" class="button button--primary button--wide quiz-next" type="button" disabled>
+                        Next
+                    </button>
+                </article>
+            </div>
+        </section>
+
+        <section id="screen-summary" class="screen screen--centered" data-screen="summary"
+            aria-labelledby="summary-title" hidden>
+            <div class="summary-card">
+                <img class="summary-logo" src="./assets/images/logo.png" alt="Result">
+
+                <p class="screen-kicker">First round complete</p>
+
+                <h1 id="summary-title" class="screen-title">
+                    Time to review
+                </h1>
+
+                <p id="summary-message" class="summary-message"></p>
+
+                <div class="summary-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">First-attempt correct</span>
+                        <strong id="summary-correct" class="stat-value"></strong>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-label">Mistakes</span>
+                        <strong id="summary-mistakes" class="stat-value"></strong>
+                    </div>
+                </div>
+
+                <button id="summary-continue" class="button button--primary button--wide" type="button">
+                    Review Mistakes
+                </button>
+            </div>
+        </section>
+
+        <section id="screen-results" class="screen screen--results" data-screen="results"
+            aria-labelledby="results-title" hidden>
+            <div id="results-effects" class="results-effects" aria-hidden="true"></div>
+
+            <div class="results-card">
+                <img class="results-logo" src="./assets/images/logo.png" alt="Result">
+
+                <p class="screen-kicker">Quiz complete</p>
+
+                <h1 id="results-title" class="screen-title">
+                    Your results
+                </h1>
+
+                <div id="result-ring" class="score-ring" role="img" aria-label="Final score">
+                    <div class="score-ring-inner">
+                        <strong id="result-percentage">0%</strong>
+                        <span>First attempt</span>
+                    </div>
+                </div>
+
+                <div class="result-heading">
+                    <span id="result-icon" class="result-icon" aria-hidden="true"></span>
+                    <h2 id="result-message"></h2>
+                </div>
+
+                <dl class="result-details">
+                    <div class="result-detail">
+                        <dt>Student</dt>
+                        <dd id="result-name"></dd>
+                    </div>
+
+                    <div class="result-detail">
+                        <dt>Score</dt>
+                        <dd id="result-score"></dd>
+                    </div>
+
+                    <div class="result-detail">
+                        <dt>Level</dt>
+                        <dd id="result-level"></dd>
+                    </div>
+
+                    <div class="result-detail">
+                        <dt>Lesson group</dt>
+                        <dd id="result-group"></dd>
+                    </div>
+                </dl>
+
+                <div class="results-actions">
+                    <button id="result-retake" class="button button--primary" type="button">
+                        Retake Quiz
+                    </button>
+
+                    <button id="result-another-unit" class="button button--secondary" type="button">
+                        Choose Another Unit
+                    </button>
+
+                    <button id="result-home" class="button button--ghost" type="button">
+                        Back Home
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <dialog id="exit-dialog" class="dialog" aria-labelledby="exit-dialog-title"
+        aria-describedby="exit-dialog-description">
+        <div class="dialog-content">
+            <h2 id="exit-dialog-title">Leave this quiz?</h2>
+
+            <p id="exit-dialog-description">
+                Your current quiz progress will be cleared.
+            </p>
+
+            <div class="button-group">
+                <button id="exit-stay" class="button button--secondary" type="button">
+                    Stay
+                </button>
+
+                <button id="exit-leave" class="button button--primary" type="button">
+                    Leave Quiz
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <div id="global-live-region" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <noscript>
+        <div class="noscript-message">
+            JavaScript is required to use Vocabulary Practice.
+        </div>
+    </noscript>
+
+    <script type="module" src="./js/app.js"></script>
+</body>
+
+</html>
