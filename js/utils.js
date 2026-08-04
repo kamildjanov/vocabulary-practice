@@ -38,9 +38,9 @@ export function shuffle(items) {
             shuffled[currentIndex],
             shuffled[randomIndex],
         ] = [
-                shuffled[randomIndex],
-                shuffled[currentIndex],
-            ];
+            shuffled[randomIndex],
+            shuffled[currentIndex],
+        ];
     }
 
     return shuffled;
@@ -228,6 +228,7 @@ export function setRadioSelection(
             "aria-checked",
             String(isSelected)
         );
+
         button.classList.toggle(
             "is-selected",
             isSelected
@@ -265,6 +266,114 @@ export function focusElement(element) {
     }
 }
 
+function isScrollableElement(element) {
+    if (!(element instanceof HTMLElement)) {
+        return false;
+    }
+
+    const styles =
+        window.getComputedStyle(element);
+
+    const overflowY = styles.overflowY;
+    const allowsScrolling = [
+        "auto",
+        "scroll",
+        "overlay",
+    ].includes(overflowY);
+
+    return (
+        allowsScrolling &&
+        element.scrollHeight >
+            element.clientHeight + 1
+    );
+}
+
+function getScrollableParent(element) {
+    let parent = element.parentElement;
+
+    while (
+        parent &&
+        parent !== document.body &&
+        parent !== document.documentElement
+    ) {
+        if (isScrollableElement(parent)) {
+            return parent;
+        }
+
+        parent = parent.parentElement;
+    }
+
+    return null;
+}
+
+function calculateInternalScrollTop(
+    container,
+    element,
+    block
+) {
+    const containerRect =
+        container.getBoundingClientRect();
+    const elementRect =
+        element.getBoundingClientRect();
+
+    const currentScrollTop =
+        container.scrollTop;
+
+    const elementTop =
+        currentScrollTop +
+        elementRect.top -
+        containerRect.top;
+
+    const elementBottom =
+        elementTop +
+        elementRect.height;
+
+    const visibleTop =
+        currentScrollTop;
+
+    const visibleBottom =
+        currentScrollTop +
+        container.clientHeight;
+
+    if (block === "start") {
+        return elementTop;
+    }
+
+    if (block === "center") {
+        return (
+            elementTop -
+            (
+                container.clientHeight -
+                elementRect.height
+            ) /
+                2
+        );
+    }
+
+    if (block === "end") {
+        return (
+            elementBottom -
+            container.clientHeight
+        );
+    }
+
+    if (
+        elementTop >= visibleTop &&
+        elementBottom <= visibleBottom
+    ) {
+        return currentScrollTop;
+    }
+
+    if (elementTop < visibleTop) {
+        return elementTop;
+    }
+
+    return (
+        elementBottom -
+        container.clientHeight
+    );
+}
+
 export function scrollElementIntoView(
     element,
     {
@@ -276,15 +385,41 @@ export function scrollElementIntoView(
         return;
     }
 
+    const container =
+        getScrollableParent(element);
+
+    if (!container) {
+        return;
+    }
+
     const reducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    element.scrollIntoView({
+    const maximumScrollTop =
+        Math.max(
+            0,
+            container.scrollHeight -
+                container.clientHeight
+        );
+
+    const requestedScrollTop =
+        calculateInternalScrollTop(
+            container,
+            element,
+            block
+        );
+
+    container.scrollTo({
+        top: clamp(
+            requestedScrollTop,
+            0,
+            maximumScrollTop
+        ),
+        left: container.scrollLeft,
         behavior: reducedMotion
             ? "auto"
             : behavior,
-        block,
     });
 }
 
