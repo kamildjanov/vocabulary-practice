@@ -1,4 +1,25 @@
+function createAttemptId() {
+    if (
+        globalThis.crypto &&
+        typeof globalThis.crypto.randomUUID ===
+            "function"
+    ) {
+        return globalThis.crypto.randomUUID();
+    }
+
+    return [
+        Date.now().toString(36),
+        Math.random()
+            .toString(36)
+            .slice(2, 12),
+        Math.random()
+            .toString(36)
+            .slice(2, 12),
+    ].join("-");
+}
+
 const createInitialQuizState = () => ({
+    attemptId: "",
     mode: "first-round",
     questions: [],
     currentIndex: 0,
@@ -38,9 +59,9 @@ function updateState(updater) {
         typeof updater === "function"
             ? updater(state)
             : {
-                ...state,
-                ...updater,
-            };
+                  ...state,
+                  ...updater,
+              };
 
     state = nextState;
     notifyListeners();
@@ -52,7 +73,9 @@ function cloneQuizState(quiz) {
     return {
         ...quiz,
         questions: [...quiz.questions],
-        firstRoundMistakes: [...quiz.firstRoundMistakes],
+        firstRoundMistakes: [
+            ...quiz.firstRoundMistakes,
+        ],
         reviewQueue: [...quiz.reviewQueue],
         currentAnswer: quiz.currentAnswer
             ? { ...quiz.currentAnswer }
@@ -69,7 +92,9 @@ export function getState() {
 
 export function subscribe(listener) {
     if (typeof listener !== "function") {
-        throw new TypeError("State listener must be a function.");
+        throw new TypeError(
+            "State listener must be a function."
+        );
     }
 
     listeners.add(listener);
@@ -80,8 +105,13 @@ export function subscribe(listener) {
 }
 
 export function setCurrentScreen(screenName) {
-    if (typeof screenName !== "string" || !screenName.trim()) {
-        throw new TypeError("A valid screen name is required.");
+    if (
+        typeof screenName !== "string" ||
+        !screenName.trim()
+    ) {
+        throw new TypeError(
+            "A valid screen name is required."
+        );
     }
 
     return updateState((currentState) => ({
@@ -93,7 +123,9 @@ export function setCurrentScreen(screenName) {
 export function setStudentName(studentName) {
     const normalizedName =
         typeof studentName === "string"
-            ? studentName.trim().replace(/\s+/g, " ")
+            ? studentName
+                  .trim()
+                  .replace(/\s+/g, " ")
             : "";
 
     return updateState((currentState) => ({
@@ -122,7 +154,8 @@ export function setLevel(levelId) {
 
     return updateState((currentState) => {
         const levelChanged =
-            currentState.levelId !== normalizedLevelId;
+            currentState.levelId !==
+            normalizedLevelId;
 
         return {
             ...currentState,
@@ -149,7 +182,10 @@ export function setLevel(levelId) {
 export function setLevelData(levelData) {
     if (
         levelData !== null &&
-        (typeof levelData !== "object" || Array.isArray(levelData))
+        (
+            typeof levelData !== "object" ||
+            Array.isArray(levelData)
+        )
     ) {
         throw new TypeError(
             "Level data must be an object or null."
@@ -200,7 +236,10 @@ export function clearLessonGroup() {
 }
 
 export function initializeQuiz(questions) {
-    if (!Array.isArray(questions) || questions.length === 0) {
+    if (
+        !Array.isArray(questions) ||
+        questions.length === 0
+    ) {
         throw new TypeError(
             "Quiz questions must be a non-empty array."
         );
@@ -210,13 +249,16 @@ export function initializeQuiz(questions) {
         ...currentState,
         quiz: {
             ...createInitialQuizState(),
+            attemptId: createAttemptId(),
             questions: [...questions],
             totalQuestions: questions.length,
         },
     }));
 }
 
-export function setCurrentQuizAnswer(answerRecord) {
+export function setCurrentQuizAnswer(
+    answerRecord
+) {
     if (
         answerRecord !== null &&
         (
@@ -262,14 +304,17 @@ export function recordFirstRoundAnswer({
             quiz: {
                 ...currentState.quiz,
                 firstRoundCorrect:
-                    currentState.quiz.firstRoundCorrect +
+                    currentState.quiz
+                        .firstRoundCorrect +
                     (isCorrect ? 1 : 0),
                 firstRoundMistakes: isCorrect
-                    ? currentState.quiz.firstRoundMistakes
+                    ? currentState.quiz
+                          .firstRoundMistakes
                     : [
-                        ...currentState.quiz.firstRoundMistakes,
-                        mistakeRecord,
-                    ],
+                          ...currentState.quiz
+                              .firstRoundMistakes,
+                          mistakeRecord,
+                      ],
             },
         };
     });
@@ -281,7 +326,8 @@ export function advanceQuizQuestion() {
         quiz: {
             ...currentState.quiz,
             currentIndex:
-                currentState.quiz.currentIndex + 1,
+                currentState.quiz.currentIndex +
+                1,
             currentAnswer: null,
         },
     }));
@@ -296,9 +342,11 @@ export function startReview() {
             currentIndex: 0,
             currentAnswer: null,
             reviewQueue:
-                currentState.quiz.firstRoundMistakes.map(
-                    (mistake) => mistake.question
-                ),
+                currentState.quiz
+                    .firstRoundMistakes.map(
+                        (mistake) =>
+                            mistake.question
+                    ),
             reviewCompleted: false,
         },
     }));
@@ -316,7 +364,9 @@ export function resolveReviewAnswer({
 
     return updateState((currentState) => {
         const remainingQueue =
-            currentState.quiz.reviewQueue.slice(1);
+            currentState.quiz.reviewQueue.slice(
+                1
+            );
 
         if (!isCorrect) {
             remainingQueue.push(question);
@@ -328,7 +378,8 @@ export function resolveReviewAnswer({
                 ...currentState.quiz,
                 reviewQueue: remainingQueue,
                 currentIndex:
-                    currentState.quiz.currentIndex + 1,
+                    currentState.quiz
+                        .currentIndex + 1,
                 currentAnswer: null,
                 reviewCompleted:
                     remainingQueue.length === 0,
