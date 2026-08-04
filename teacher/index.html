@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <meta
+        name="theme-color"
+        content="#e30613"
+    >
+
+    <title>Teacher Results</title>
+
+    <link
+        rel="icon"
+        href="../assets/images/logo.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/base.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/teacher.css"
+    >
+</head>
+
+<body class="teacher-body">
+    <main
+        id="teacher-app"
+        class="teacher-app"
+    >
+        <section
+            id="teacher-login-screen"
+            class="teacher-screen teacher-screen--login"
+            aria-labelledby="teacher-login-title"
+        >
+            <div class="teacher-login-card">
+                <img
+                    class="teacher-login-logo"
+                    src="../assets/images/logo.png"
+                    alt="Vocabulary Practice"
+                >
+
+                <div class="teacher-heading-group">
+                    <p class="teacher-kicker">
+                        Vocabulary Practice
+                    </p>
+
+                    <h1
+                        id="teacher-login-title"
+                        class="teacher-title"
+                    >
+                        Teacher Results
+                    </h1>
+
+                    <p class="teacher-description">
+                        Sign in with your authorized teacher account.
+                    </p>
+                </div>
+
+                <form
+                    id="teacher-login-form"
+                    class="teacher-login-form"
+                    novalidate
+                >
+                    <div class="teacher-field">
+                        <label
+                            class="teacher-label"
+                            for="teacher-email"
+                        >
+                            Email address
+                        </label>
+
+                        <input
+                            id="teacher-email"
+                            class="teacher-input"
+                            name="email"
+                            type="email"
+                            autocomplete="email"
+                            inputmode="email"
+                            required
+                        >
+                    </div>
+
+                    <div class="teacher-field">
+                        <label
+                            class="teacher-label"
+                            for="teacher-password"
+                        >
+                            Password
+                        </label>
+
+                        <div class="teacher-password-field">
+                            <input
+                                id="teacher-password"
+                                class="teacher-input"
+                                name="password"
+                                type="password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                id="teacher-password-toggle"
+                                class="teacher-password-toggle"
+                                type="button"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+                                Show
+                            </button>
+                        </div>
+                    </div>
+
+                    <p
+                        id="teacher-login-error"
+                        class="teacher-form-message teacher-form-message--error"
+                        role="alert"
+                        aria-live="polite"
+                    ></p>
+
+                    <button
+                        id="teacher-login-button"
+                        class="teacher-button teacher-button--primary"
+                        type="submit"
+                    >
+                        Sign In
+                    </button>
+                </form>
+
+                <a
+                    class="teacher-back-link"
+                    href="../index.html"
+                >
+                    Back to Vocabulary Practice
+                </a>
+            </div>
+        </section>
+
+        <section
+            id="teacher-dashboard-screen"
+            class="teacher-screen teacher-screen--dashboard"
+            aria-labelledby="teacher-dashboard-title"
+            hidden
+        >
+            <header class="teacher-header">
+                <div class="teacher-brand">
+                    <img
+                        class="teacher-header-logo"
+                        src="../assets/images/logo.png"
+                        alt=""
+                    >
+
+                    <div>
+                        <p class="teacher-kicker">
+                            Vocabulary Practice
+                        </p>
+
+                        <h1
+                            id="teacher-dashboard-title"
+                            class="teacher-header-title"
+                        >
+                            Teacher Results
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="teacher-header-actions">
+                    <span
+                        id="teacher-account-email"
+                        class="teacher-account-email"
+                    ></span>
+
+                    <button
+                        id="teacher-refresh-button"
+                        class="teacher-button teacher-button--secondary teacher-button--compact"
+                        type="button"
+                    >
+                        Refresh
+                    </button>
+
+                    <button
+                        id="teacher-logout-button"
+                        class="teacher-button teacher-button--danger teacher-button--compact"
+                        type="button"
+                    >
+                        Sign Out
+                    </button>
+                </div>
+            </header>
+
+            <div class="teacher-dashboard-content">
+                <section
+                    class="teacher-stats"
+                    aria-label="Results summary"
+                >
+                    <article class="teacher-stat-card">
+                        <span class="teacher-stat-label">
+                            Total Results
+                        </span>
+
+                        <strong
+                            id="teacher-total-results"
+                            class="teacher-stat-value"
+                        >
+                            0
+                        </strong>
+                    </article>
+
+                    <article class="teacher-stat-card">
+                        <span class="teacher-stat-label">
+                            Students
+                        </span>
+
+                        <strong
+                            id="teacher-total-students"
+                            class="teacher-stat-value"
+                        >
+                            0
+                        </strong>
+                    </article>
+
+                    <article class="teacher-stat-card">
+                        <span class="teacher-stat-label">
+                            Average Score
+                        </span>
+
+                        <strong
+                            id="teacher-average-score"
+                            class="teacher-stat-value"
+                        >
+                            0%
+                        </strong>
+                    </article>
+
+                    <article class="teacher-stat-card">
+                        <span class="teacher-stat-label">
+                            Highest Score
+                        </span>
+
+                        <strong
+                            id="teacher-highest-score"
+                            class="teacher-stat-value"
+                        >
+                            0%
+                        </strong>
+                    </article>
+                </section>
+
+                <section
+                    class="teacher-controls"
+                    aria-label="Result filters"
+                >
+                    <div class="teacher-control-group teacher-control-group--search">
+                        <label
+                            class="teacher-control-label"
+                            for="teacher-search"
+                        >
+                            Search
+                        </label>
+
+                        <input
+                            id="teacher-search"
+                            class="teacher-control"
+                            type="search"
+                            placeholder="Student, level, unit, or lesson group"
+                        >
+                    </div>
+
+                    <div class="teacher-control-group">
+                        <label
+                            class="teacher-control-label"
+                            for="teacher-level-filter"
+                        >
+                            Level
+                        </label>
+
+                        <select
+                            id="teacher-level-filter"
+                            class="teacher-control"
+                        >
+                            <option value="">
+                                All levels
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="teacher-control-group">
+                        <label
+                            class="teacher-control-label"
+                            for="teacher-language-filter"
+                        >
+                            Language
+                        </label>
+
+                        <select
+                            id="teacher-language-filter"
+                            class="teacher-control"
+                        >
+                            <option value="">
+                                All languages
+                            </option>
+
+                            <option value="Uzbek">
+                                Uzbek
+                            </option>
+
+                            <option value="Russian">
+                                Russian
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="teacher-control-group">
+                        <label
+                            class="teacher-control-label"
+                            for="teacher-sort"
+                        >
+                            Sort
+                        </label>
+
+                        <select
+                            id="teacher-sort"
+                            class="teacher-control"
+                        >
+                            <option value="newest">
+                                Newest first
+                            </option>
+
+                            <option value="oldest">
+                                Oldest first
+                            </option>
+
+                            <option value="highest">
+                                Highest score
+                            </option>
+
+                            <option value="lowest">
+                                Lowest score
+                            </option>
+
+                            <option value="student">
+                                Student name
+                            </option>
+                        </select>
+                    </div>
+                </section>
+
+                <div
+                    id="teacher-loading"
+                    class="teacher-status"
+                    role="status"
+                    aria-live="polite"
+                    hidden
+                >
+                    Loading results…
+                </div>
+
+                <div
+                    id="teacher-error"
+                    class="teacher-status teacher-status--error"
+                    role="alert"
+                    aria-live="assertive"
+                    hidden
+                ></div>
+
+                <section
+                    id="teacher-results-panel"
+                    class="teacher-results-panel"
+                    aria-label="Student quiz results"
+                    hidden
+                >
+                    <div class="teacher-results-header">
+                        <p
+                            id="teacher-result-count"
+                            class="teacher-result-count"
+                            aria-live="polite"
+                        >
+                            0 results
+                        </p>
+
+                        <button
+                            id="teacher-clear-filters"
+                            class="teacher-button teacher-button--text teacher-button--compact"
+                            type="button"
+                        >
+                            Clear Filters
+                        </button>
+                    </div>
+
+                    <div class="teacher-table-wrapper">
+                        <table class="teacher-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Date and Time
+                                    </th>
+
+                                    <th scope="col">
+                                        Student
+                                    </th>
+
+                                    <th scope="col">
+                                        Score
+                                    </th>
+
+                                    <th scope="col">
+                                        Percentage
+                                    </th>
+
+                                    <th scope="col">
+                                        Language
+                                    </th>
+
+                                    <th scope="col">
+                                        Level
+                                    </th>
+
+                                    <th scope="col">
+                                        Unit
+                                    </th>
+
+                                    <th scope="col">
+                                        Lesson Group
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="teacher-results-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div
+                        id="teacher-empty-results"
+                        class="teacher-empty-results"
+                        hidden
+                    >
+                        <h2>No results found</h2>
+
+                        <p>
+                            There are no quiz results matching the current filters.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <div
+        id="teacher-live-region"
+        class="visually-hidden"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+    ></div>
+
+    <noscript>
+        <div class="noscript-message">
+            JavaScript is required to open the teacher dashboard.
+        </div>
+    </noscript>
+
+    <script
+        type="module"
+        src="../js/teacher-dashboard.js"
+    ></script>
+</body>
+</html>
