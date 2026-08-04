@@ -1,4 +1,25 @@
+function createAttemptId() {
+    if (
+        globalThis.crypto &&
+        typeof globalThis.crypto.randomUUID ===
+            "function"
+    ) {
+        return globalThis.crypto.randomUUID();
+    }
+
+    return [
+        Date.now().toString(36),
+        Math.random()
+            .toString(36)
+            .slice(2, 12),
+        Math.random()
+            .toString(36)
+            .slice(2, 12),
+    ].join("-");
+}
+
 const createInitialQuizState = () => ({
+    attemptId: "",
     mode: "first-round",
     questions: [],
     currentIndex: 0,
@@ -228,6 +249,7 @@ export function initializeQuiz(questions) {
         ...currentState,
         quiz: {
             ...createInitialQuizState(),
+            attemptId: createAttemptId(),
             questions: [...questions],
             totalQuestions: questions.length,
         },
