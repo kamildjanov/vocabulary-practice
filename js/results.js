@@ -12,9 +12,6 @@ import {
     showScreen,
 } from "./navigation.js";
 import {
-    submitQuizResult,
-} from "./result-submitter.js";
-import {
     getState,
     resetForAnotherUnit,
 } from "./state.js";
@@ -61,10 +58,9 @@ function cacheElements() {
     elements.retake = getRequiredElement(
         "#result-retake"
     );
-    elements.anotherUnit =
-        getRequiredElement(
-            "#result-another-unit"
-        );
+    elements.anotherUnit = getRequiredElement(
+        "#result-another-unit"
+    );
     elements.home = getRequiredElement(
         "#result-home"
     );
@@ -223,51 +219,6 @@ function renderResultDetails(resultData) {
     animateScoreRing(percentage);
 }
 
-async function submitResult(
-    resultData
-) {
-    const {
-        state,
-        levelName,
-        totalQuestions,
-        correctCount,
-        unitName,
-        groupName,
-    } = resultData;
-
-    if (
-        !state.quiz.attemptId ||
-        !state.studentName ||
-        !levelName ||
-        !unitName ||
-        !groupName
-    ) {
-        console.warn(
-            "Quiz result was not submitted because required result information is missing."
-        );
-        return;
-    }
-
-    try {
-        await submitQuizResult({
-            studentName:
-                state.studentName,
-            score: correctCount,
-            totalQuestions,
-            level: levelName,
-            unit: unitName,
-            lessonGroup: groupName,
-            submissionId:
-                state.quiz.attemptId,
-        });
-    } catch (error) {
-        console.warn(
-            "Quiz result could not be submitted.",
-            error
-        );
-    }
-}
-
 function openAnotherUnitScreen() {
     clearResultEffects();
     resetForAnotherUnit();
@@ -375,8 +326,6 @@ export function showFinalResults() {
     runResultEffect(
         resultData.resultBand.effect
     );
-
-    void submitResult(resultData);
 
     announce(
         `${resultData.resultBand.message} You scored ${resultData.correctCount} out of ${resultData.totalQuestions}, or ${resultData.percentage} percent.`
