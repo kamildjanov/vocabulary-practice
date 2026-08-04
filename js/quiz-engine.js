@@ -4,7 +4,10 @@ import {
     SCREENS,
     getLanguageById,
 } from "./config.js";
-import { goHome, showScreen } from "./navigation.js";
+import {
+    goHome,
+    showScreen,
+} from "./navigation.js";
 import {
     advanceQuizQuestion,
     getState,
@@ -14,17 +17,19 @@ import {
     setCurrentQuizAnswer,
     startReview,
 } from "./state.js";
-import { showFirstRoundSummary } from "./review-engine.js";
-import { showFinalResults } from "./results.js";
+import {
+    showFirstRoundSummary,
+} from "./review-engine.js";
+import {
+    showFinalResults,
+} from "./results.js";
 import {
     announce,
     createElement,
     focusElement,
     getRequiredElement,
-    isPhoneLayout,
     normalizeComparableText,
     normalizeWhitespace,
-    scrollElementIntoView,
     setButtonEnabled,
     shuffle,
 } from "./utils.js";
@@ -88,7 +93,10 @@ function getAlternativeSignatures(value) {
         .split("/")
         .map((part) =>
             normalizeComparableText(part)
-                .replace(/[^\p{L}\p{N}]+/gu, " ")
+                .replace(
+                    /[^\p{L}\p{N}]+/gu,
+                    " "
+                )
                 .replace(/\s+/g, " ")
                 .trim()
         )
@@ -418,7 +426,7 @@ function buildQuizQuestions(
     if (
         !Array.isArray(entries) ||
         entries.length <
-        QUIZ_SETTINGS.answerChoiceCount
+            QUIZ_SETTINGS.answerChoiceCount
     ) {
         throw new Error(
             `This lesson group needs at least ${QUIZ_SETTINGS.answerChoiceCount} valid vocabulary entries.`
@@ -445,7 +453,7 @@ function getCurrentQuestion() {
 
     return (
         quiz.questions[
-        quiz.currentIndex
+            quiz.currentIndex
         ] ?? null
     );
 }
@@ -480,17 +488,21 @@ function updateProgress({
         const completedCount =
             initialMistakeCount -
             remainingCount +
-            (answered && answerWasCorrect
-                ? 1
-                : 0);
+            (
+                answered &&
+                answerWasCorrect
+                    ? 1
+                    : 0
+            );
 
         percentage =
             initialMistakeCount > 0
                 ? Math.round(
-                    (completedCount /
-                        initialMistakeCount) *
-                    100
-                )
+                      (
+                          completedCount /
+                          initialMistakeCount
+                      ) * 100
+                  )
                 : 100;
 
         elements.modeLabel.textContent =
@@ -510,10 +522,11 @@ function updateProgress({
         percentage =
             quiz.totalQuestions > 0
                 ? Math.round(
-                    (completedCount /
-                        quiz.totalQuestions) *
-                    100
-                )
+                      (
+                          completedCount /
+                          quiz.totalQuestions
+                      ) * 100
+                  )
                 : 0;
 
         elements.modeLabel.textContent =
@@ -537,6 +550,7 @@ function updateProgress({
 
     elements.progressBar.style.width =
         `${safePercentage}%`;
+
     elements.progressTrack.setAttribute(
         "aria-valuenow",
         String(safePercentage)
@@ -552,7 +566,8 @@ function createAnswerButton(
         attributes: {
             type: "button",
             "data-answer-index": index,
-            "aria-label": `Answer ${index + 1}: ${answer}`,
+            "aria-label":
+                `Answer ${index + 1}: ${answer}`,
         },
     });
 
@@ -600,7 +615,11 @@ function resetAnswerArea() {
         "feedback";
 
     elements.next.textContent = "Next";
-    setButtonEnabled(elements.next, false);
+
+    setButtonEnabled(
+        elements.next,
+        false
+    );
 }
 
 function renderAnswerChoices(question) {
@@ -640,9 +659,24 @@ function updateNextButtonLabel() {
 
     elements.next.textContent =
         quiz.currentIndex ===
-            quiz.totalQuestions - 1
+        quiz.totalQuestions - 1
             ? "See Summary"
             : "Next";
+}
+
+function resetQuizCardScroll() {
+    const quizCard =
+        elements.answers.closest(
+            ".quiz-card"
+        );
+
+    if (
+        quizCard instanceof
+        HTMLElement
+    ) {
+        quizCard.scrollTop = 0;
+        quizCard.scrollLeft = 0;
+    }
 }
 
 function renderCurrentQuestion() {
@@ -650,7 +684,8 @@ function renderCurrentQuestion() {
     const language = getLanguageById(
         state.languageId
     );
-    const question = getCurrentQuestion();
+    const question =
+        getCurrentQuestion();
 
     if (!language || !question) {
         return false;
@@ -670,6 +705,7 @@ function renderCurrentQuestion() {
     renderAnswerChoices(question);
     updateNextButtonLabel();
     updateProgress();
+    resetQuizCardScroll();
 
     const firstAnswer =
         elements.answers.querySelector(
@@ -694,7 +730,10 @@ function getAnswerButtons() {
     ];
 }
 
-function addAnswerMark(button, mark) {
+function addAnswerMark(
+    button,
+    mark
+) {
     const markElement =
         button.querySelector(
             ".answer-mark"
@@ -717,11 +756,7 @@ function showAnswerFeedback(
         (button, index) => {
             const answer =
                 renderedAnswers[index];
-            const isCorrectAnswer =
-                !areAnswersAmbiguous(
-                    answer,
-                    question.correctAnswer
-                );
+
             const exactCorrectAnswer =
                 getAnswerSignature(answer) ===
                 getAnswerSignature(
@@ -746,14 +781,9 @@ function showAnswerFeedback(
                 return;
             }
 
-            if (
-                isCorrectAnswer ||
-                index !== selectedIndex
-            ) {
-                button.classList.add(
-                    "is-faded"
-                );
-            }
+            button.classList.add(
+                "is-faded"
+            );
         }
     );
 
@@ -769,24 +799,17 @@ function showAnswerFeedback(
             "feedback is-incorrect";
     }
 
-    setButtonEnabled(elements.next, true);
+    setButtonEnabled(
+        elements.next,
+        true
+    );
+
     updateNextButtonLabel();
 
     updateProgress({
         answered: true,
         answerWasCorrect: isCorrect,
     });
-
-    if (isPhoneLayout()) {
-        window.requestAnimationFrame(() => {
-            scrollElementIntoView(
-                elements.feedback,
-                {
-                    block: "center",
-                }
-            );
-        });
-    }
 }
 
 function selectAnswer(answerIndex) {
@@ -850,6 +873,7 @@ function selectAnswer(answerIndex) {
 
 function finishFirstRoundOrAdvance() {
     const { quiz } = getState();
+
     const isLastQuestion =
         quiz.currentIndex >=
         quiz.totalQuestions - 1;
@@ -931,6 +955,8 @@ function leaveQuiz() {
 }
 
 function handleAnswerClick(event) {
+    event.preventDefault();
+
     const button = event.target.closest(
         ".answer-option"
     );
@@ -957,7 +983,7 @@ function handleAnswerClick(event) {
 function handleKeyboardControls(event) {
     if (
         getState().currentScreen !==
-        SCREENS.quiz ||
+            SCREENS.quiz ||
         elements.exitDialog.open ||
         event.altKey ||
         event.ctrlKey ||
@@ -976,12 +1002,12 @@ function handleKeyboardControls(event) {
 
         const button =
             getAnswerButtons()[
-            answerKeyIndex
+                answerKeyIndex
             ];
 
         if (
             button instanceof
-            HTMLButtonElement &&
+                HTMLButtonElement &&
             !button.disabled
         ) {
             selectAnswer(
