@@ -1,6 +1,7 @@
 import {
     RESULT_BANDS,
     SCREENS,
+    getLanguageById,
     getLevelById,
 } from "./config.js";
 import {
@@ -11,6 +12,9 @@ import {
     goHome,
     showScreen,
 } from "./navigation.js";
+import {
+    submitQuizResult,
+} from "./result-submitter.js";
 import {
     getState,
     resetForAnotherUnit,
@@ -94,21 +98,30 @@ function getSelectedUnitName(state) {
 
 function getResultData() {
     const state = getState();
+
     const level = getLevelById(
         state.levelId
     );
 
+    const language = getLanguageById(
+        state.languageId
+    );
+
     const totalQuestions =
         state.quiz.totalQuestions;
+
     const correctCount =
         state.quiz.firstRoundCorrect;
+
     const percentage =
         calculatePercentage(
             correctCount,
             totalQuestions
         );
+
     const unitName =
         getSelectedUnitName(state);
+
     const groupName =
         state.selectedGroup?.name ?? "";
 
@@ -118,6 +131,8 @@ function getResultData() {
             level?.name ??
             state.levelData?.level?.name ??
             "",
+        languageName:
+            language?.name ?? "",
         totalQuestions,
         correctCount,
         percentage,
@@ -184,26 +199,32 @@ function renderResultDetails(resultData) {
         elements.percentage,
         `${percentage}%`
     );
+
     setElementText(
         elements.icon,
         resultBand.icon
     );
+
     setElementText(
         elements.message,
         resultBand.message
     );
+
     setElementText(
         elements.name,
         state.studentName
     );
+
     setElementText(
         elements.score,
         `${correctCount}/${totalQuestions}`
     );
+
     setElementText(
         elements.level,
         levelName
     );
+
     setElementText(
         elements.group,
         unitName
@@ -219,22 +240,77 @@ function renderResultDetails(resultData) {
     animateScoreRing(percentage);
 }
 
+async function submitResult(resultData) {
+    const {
+        state,
+        levelName,
+        languageName,
+        totalQuestions,
+        correctCount,
+        unitName,
+        groupName,
+    } = resultData;
+
+    if (
+        !state.quiz.attemptId ||
+        !state.studentName ||
+        !languageName ||
+        !levelName ||
+        !unitName ||
+        !groupName
+    ) {
+        console.warn(
+            "The quiz result was not submitted because required information is missing."
+        );
+
+        return;
+    }
+
+    try {
+        await submitQuizResult({
+            submissionId:
+                state.quiz.attemptId,
+            studentName:
+                state.studentName,
+            score:
+                correctCount,
+            totalQuestions,
+            language:
+                languageName,
+            level:
+                levelName,
+            unitName,
+            lessonGroup:
+                groupName,
+        });
+    } catch (error) {
+        console.warn(
+            "The quiz result could not be submitted to Supabase.",
+            error
+        );
+    }
+}
+
 function openAnotherUnitScreen() {
     clearResultEffects();
     resetForAnotherUnit();
 
     const state = getState();
+
     const level = getLevelById(
         state.levelId
     );
+
     const levelNameElement =
         getRequiredElement(
             "#unit-level-name"
         );
+
     const loadingElement =
         getRequiredElement(
             "#unit-loading"
         );
+
     const errorElement =
         getRequiredElement(
             "#unit-error"
@@ -313,6 +389,7 @@ export function showFinalResults() {
         announce(
             "The quiz results are not ready yet."
         );
+
         return false;
     }
 
@@ -326,6 +403,8 @@ export function showFinalResults() {
     runResultEffect(
         resultData.resultBand.effect
     );
+
+    void submitResult(resultData);
 
     announce(
         `${resultData.resultBand.message} You scored ${resultData.correctCount} out of ${resultData.totalQuestions}, or ${resultData.percentage} percent.`
