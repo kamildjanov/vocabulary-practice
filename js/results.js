@@ -12,6 +12,9 @@ import {
     showScreen,
 } from "./navigation.js";
 import {
+    submitQuizResult,
+} from "./result-submitter.js";
+import {
     getState,
     resetForAnotherUnit,
 } from "./state.js";
@@ -138,7 +141,7 @@ function isResultReady(resultData) {
     return (
         resultData.totalQuestions > 0 &&
         answeredCount ===
-        resultData.totalQuestions
+            resultData.totalQuestions
     );
 }
 
@@ -146,6 +149,7 @@ function resetScoreRing() {
     elements.scoreRing.classList.remove(
         "is-gentle-pulse"
     );
+
     elements.scoreRing.style.setProperty(
         "--score-angle",
         "0deg"
@@ -219,6 +223,51 @@ function renderResultDetails(resultData) {
     animateScoreRing(percentage);
 }
 
+async function submitResult(
+    resultData
+) {
+    const {
+        state,
+        levelName,
+        totalQuestions,
+        correctCount,
+        unitName,
+        groupName,
+    } = resultData;
+
+    if (
+        !state.quiz.attemptId ||
+        !state.studentName ||
+        !levelName ||
+        !unitName ||
+        !groupName
+    ) {
+        console.warn(
+            "Quiz result was not submitted because required result information is missing."
+        );
+        return;
+    }
+
+    try {
+        await submitQuizResult({
+            studentName:
+                state.studentName,
+            score: correctCount,
+            totalQuestions,
+            level: levelName,
+            unit: unitName,
+            lessonGroup: groupName,
+            submissionId:
+                state.quiz.attemptId,
+        });
+    } catch (error) {
+        console.warn(
+            "Quiz result could not be submitted.",
+            error
+        );
+    }
+}
+
 function openAnotherUnitScreen() {
     clearResultEffects();
     resetForAnotherUnit();
@@ -243,8 +292,8 @@ function openAnotherUnitScreen() {
     setElementText(
         levelNameElement,
         level?.name ??
-        state.levelData?.level?.name ??
-        ""
+            state.levelData?.level?.name ??
+            ""
     );
 
     loadingElement.hidden = true;
@@ -326,6 +375,8 @@ export function showFinalResults() {
     runResultEffect(
         resultData.resultBand.effect
     );
+
+    void submitResult(resultData);
 
     announce(
         `${resultData.resultBand.message} You scored ${resultData.correctCount} out of ${resultData.totalQuestions}, or ${resultData.percentage} percent.`
