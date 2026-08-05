@@ -19,6 +19,9 @@ const RESULTS_QUERY = [
     "limit=1000",
 ].join("&");
 
+const SESSION_STORAGE_KEY =
+    "vocabulary_teacher_session";
+
 const TOKEN_REFRESH_MARGIN_MS = 60_000;
 
 const elements = {
@@ -176,6 +179,101 @@ function setButtonBusy(
         : normalText;
 }
 
+function saveSession() {
+    if (!authSession) {
+        return;
+    }
+
+    try {
+        localStorage.setItem(
+            SESSION_STORAGE_KEY,
+            JSON.stringify(authSession)
+        );
+    } catch (error) {
+        console.warn(
+            "The teacher session could not be saved.",
+            error
+        );
+    }
+}
+
+function loadSavedSession() {
+    try {
+        const savedSession =
+            localStorage.getItem(
+                SESSION_STORAGE_KEY
+            );
+
+        if (!savedSession) {
+            return null;
+        }
+
+        const parsedSession =
+            JSON.parse(savedSession);
+
+        const accessToken =
+            normalizeText(
+                parsedSession?.accessToken
+            );
+
+        const refreshToken =
+            normalizeText(
+                parsedSession?.refreshToken
+            );
+
+        const expiresAt = Number(
+            parsedSession?.expiresAt
+        );
+
+        const user =
+            parsedSession?.user;
+
+        if (
+            !accessToken ||
+            !refreshToken ||
+            !Number.isFinite(expiresAt) ||
+            !user ||
+            typeof user !== "object"
+        ) {
+            clearSavedSession();
+            return null;
+        }
+
+        return {
+            accessToken,
+            refreshToken,
+            expiresAt,
+            user,
+        };
+    } catch (error) {
+        console.warn(
+            "The saved teacher session could not be read.",
+            error
+        );
+
+        clearSavedSession();
+        return null;
+    }
+}
+
+function clearSavedSession() {
+    try {
+        localStorage.removeItem(
+            SESSION_STORAGE_KEY
+        );
+    } catch (error) {
+        console.warn(
+            "The saved teacher session could not be removed.",
+            error
+        );
+    }
+}
+
+function clearAuthentication() {
+    authSession = null;
+    clearSavedSession();
+}
+
 function showLoginScreen() {
     elements.dashboardScreen.hidden = true;
     elements.loginScreen.hidden = false;
@@ -225,7 +323,11 @@ async function readResponseData(response) {
             "content-type"
         ) ?? "";
 
-    if (contentType.includes("application/json")) {
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
         try {
             return await response.json();
         } catch {
@@ -251,11 +353,16 @@ function getErrorMessage(
 ) {
     return (
         normalizeText(responseData?.msg) ||
-        normalizeText(responseData?.message) ||
         normalizeText(
-            responseData?.error_description
+            responseData?.message
         ) ||
-        normalizeText(responseData?.error) ||
+        normalizeText(
+            responseData
+                ?.error_description
+        ) ||
+        normalizeText(
+            responseData?.error
+        ) ||
         fallbackMessage ||
         `Request failed with status ${response.status}.`
     );
@@ -265,8 +372,10 @@ function createAuthHeaders(
     accessToken = ""
 ) {
     const headers = {
-        apikey: SUPABASE_PUBLISHABLE_KEY,
-        "Content-Type": "application/json",
+        apikey:
+            SUPABASE_PUBLISHABLE_KEY,
+        "Content-Type":
+            "application/json",
     };
 
     if (accessToken) {
@@ -278,13 +387,15 @@ function createAuthHeaders(
 }
 
 function updateAuthSession(data) {
-    const accessToken = normalizeText(
-        data?.access_token
-    );
+    const accessToken =
+        normalizeText(
+            data?.access_token
+        );
 
-    const refreshToken = normalizeText(
-        data?.refresh_token
-    );
+    const refreshToken =
+        normalizeText(
+            data?.refresh_token
+        );
 
     const expiresIn = Number(
         data?.expires_in
@@ -309,9 +420,12 @@ function updateAuthSession(data) {
         accessToken,
         refreshToken,
         expiresAt:
-            Date.now() + expiresIn * 1000,
+            Date.now() +
+            expiresIn * 1000,
         user,
     };
+
+    saveSession();
 
     return authSession;
 }
@@ -326,7 +440,8 @@ async function signInWithPassword(
             method: "POST",
             mode: "cors",
             cache: "no-store",
-            headers: createAuthHeaders(),
+            headers:
+                createAuthHeaders(),
             body: JSON.stringify({
                 email,
                 password,
@@ -335,7 +450,9 @@ async function signInWithPassword(
     );
 
     const responseData =
-        await readResponseData(response);
+        await readResponseData(
+            response
+        );
 
     if (!response.ok) {
         throw new Error(
@@ -347,11 +464,15 @@ async function signInWithPassword(
         );
     }
 
-    return updateAuthSession(responseData);
+    return updateAuthSession(
+        responseData
+    );
 }
 
 async function refreshAuthSession() {
-    if (!authSession?.refreshToken) {
+    if (
+        !authSession?.refreshToken
+    ) {
         throw new Error(
             "Your teacher session has expired. Please sign in again."
         );
@@ -363,16 +484,20 @@ async function refreshAuthSession() {
             method: "POST",
             mode: "cors",
             cache: "no-store",
-            headers: createAuthHeaders(),
+            headers:
+                createAuthHeaders(),
             body: JSON.stringify({
                 refresh_token:
-                    authSession.refreshToken,
+                    authSession
+                        .refreshToken,
             }),
         }
     );
 
     const responseData =
-        await readResponseData(response);
+        await readResponseData(
+            response
+        );
 
     if (!response.ok) {
         throw new Error(
@@ -384,7 +509,9 @@ async function refreshAuthSession() {
         );
     }
 
-    return updateAuthSession(responseData);
+    return updateAuthSession(
+        responseData
+    );
 }
 
 async function getValidAccessToken({
@@ -401,7 +528,10 @@ async function getValidAccessToken({
         authSession.expiresAt -
             TOKEN_REFRESH_MARGIN_MS;
 
-    if (forceRefresh || tokenIsExpiring) {
+    if (
+        forceRefresh ||
+        tokenIsExpiring
+    ) {
         await refreshAuthSession();
     }
 
@@ -422,7 +552,8 @@ async function fetchResults(
                     SUPABASE_PUBLISHABLE_KEY,
                 Authorization:
                     `Bearer ${accessToken}`,
-                Accept: "application/json",
+                Accept:
+                    "application/json",
             },
         }
     );
@@ -437,11 +568,16 @@ function normalizeResult(row) {
         studentName: normalizeText(
             row?.student_name
         ),
-        score: Number(row?.score) || 0,
+        score:
+            Number(row?.score) || 0,
         totalQuestions:
-            Number(row?.total_questions) || 0,
+            Number(
+                row?.total_questions
+            ) || 0,
         percentage:
-            Number(row?.percentage) || 0,
+            Number(
+                row?.percentage
+            ) || 0,
         language: normalizeText(
             row?.language
         ),
@@ -462,7 +598,9 @@ async function requestResults() {
         await getValidAccessToken();
 
     let response =
-        await fetchResults(accessToken);
+        await fetchResults(
+            accessToken
+        );
 
     if (response.status === 401) {
         accessToken =
@@ -471,11 +609,15 @@ async function requestResults() {
             });
 
         response =
-            await fetchResults(accessToken);
+            await fetchResults(
+                accessToken
+            );
     }
 
     const responseData =
-        await readResponseData(response);
+        await readResponseData(
+            response
+        );
 
     if (!response.ok) {
         throw new Error(
@@ -487,7 +629,11 @@ async function requestResults() {
         );
     }
 
-    if (!Array.isArray(responseData)) {
+    if (
+        !Array.isArray(
+            responseData
+        )
+    ) {
         throw new Error(
             "Supabase returned invalid result data."
         );
@@ -501,18 +647,28 @@ async function requestResults() {
 function formatDateTime(value) {
     const date = new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
-        return normalizeText(value) || "—";
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return (
+            normalizeText(value) ||
+            "—"
+        );
     }
 
-    return dateTimeFormatter.format(date);
+    return dateTimeFormatter.format(
+        date
+    );
 }
 
 function createCell(
     value,
     className = ""
 ) {
-    const cell = document.createElement("td");
+    const cell =
+        document.createElement("td");
 
     cell.textContent =
         normalizeText(value) || "—";
@@ -527,11 +683,13 @@ function createCell(
 function createPercentageCell(
     percentage
 ) {
-    const cell = document.createElement("td");
+    const cell =
+        document.createElement("td");
 
-    const badge = document.createElement(
-        "span"
-    );
+    const badge =
+        document.createElement(
+            "span"
+        );
 
     badge.className =
         "teacher-percentage";
@@ -546,7 +704,8 @@ function createPercentageCell(
         );
     }
 
-    badge.textContent = `${percentage}%`;
+    badge.textContent =
+        `${percentage}%`;
 
     cell.append(badge);
 
@@ -554,11 +713,14 @@ function createPercentageCell(
 }
 
 function createResultRow(result) {
-    const row = document.createElement("tr");
+    const row =
+        document.createElement("tr");
 
     row.append(
         createCell(
-            formatDateTime(result.createdAt)
+            formatDateTime(
+                result.createdAt
+            )
         ),
         createCell(
             result.studentName,
@@ -571,44 +733,62 @@ function createResultRow(result) {
         createPercentageCell(
             result.percentage
         ),
-        createCell(result.language),
-        createCell(result.level),
-        createCell(result.unitName),
-        createCell(result.lessonGroup)
+        createCell(
+            result.language
+        ),
+        createCell(
+            result.level
+        ),
+        createCell(
+            result.unitName
+        ),
+        createCell(
+            result.lessonGroup
+        )
     );
 
     return row;
 }
 
 function updateStatistics(results) {
-    const uniqueStudents = new Set(
-        results
-            .map((result) =>
-                normalizeSearchText(
-                    result.studentName
+    const uniqueStudents =
+        new Set(
+            results
+                .map((result) =>
+                    normalizeSearchText(
+                        result.studentName
+                    )
                 )
-            )
-            .filter(Boolean)
-    );
+                .filter(Boolean)
+        );
 
-    const percentages = results.map(
-        (result) => result.percentage
-    );
+    const percentages =
+        results.map(
+            (result) =>
+                result.percentage
+        );
 
     const average =
         percentages.length > 0
             ? Math.round(
                   percentages.reduce(
-                      (total, value) =>
-                          total + value,
+                      (
+                          total,
+                          value
+                      ) =>
+                          total +
+                          value,
                       0
-                  ) / percentages.length
+                  ) /
+                      percentages.length
               )
             : 0;
 
     const highest =
         percentages.length > 0
-            ? Math.max(...percentages)
+            ? Math.max(
+                  ...percentages
+              )
             : 0;
 
     elements.totalResults.textContent =
@@ -624,15 +804,18 @@ function updateStatistics(results) {
         `${highest}%`;
 }
 
-function renderLevelFilter(results) {
+function renderLevelFilter(
+    results
+) {
     const currentValue =
         elements.levelFilter.value;
 
     const levels = [
         ...new Set(
             results
-                .map((result) =>
-                    result.level
+                .map(
+                    (result) =>
+                        result.level
                 )
                 .filter(Boolean)
         ),
@@ -644,17 +827,23 @@ function renderLevelFilter(results) {
         document.createDocumentFragment();
 
     const allLevelsOption =
-        document.createElement("option");
+        document.createElement(
+            "option"
+        );
 
     allLevelsOption.value = "";
     allLevelsOption.textContent =
         "All levels";
 
-    fragment.append(allLevelsOption);
+    fragment.append(
+        allLevelsOption
+    );
 
     levels.forEach((level) => {
         const option =
-            document.createElement("option");
+            document.createElement(
+                "option"
+            );
 
         option.value = level;
         option.textContent = level;
@@ -666,7 +855,11 @@ function renderLevelFilter(results) {
         fragment
     );
 
-    if (levels.includes(currentValue)) {
+    if (
+        levels.includes(
+            currentValue
+        )
+    ) {
         elements.levelFilter.value =
             currentValue;
     }
@@ -689,48 +882,53 @@ function getFilteredResults() {
         );
 
     const filteredResults =
-        allResults.filter((result) => {
-            if (
-                selectedLevel &&
-                normalizeSearchText(
-                    result.level
-                ) !== selectedLevel
-            ) {
-                return false;
+        allResults.filter(
+            (result) => {
+                if (
+                    selectedLevel &&
+                    normalizeSearchText(
+                        result.level
+                    ) !== selectedLevel
+                ) {
+                    return false;
+                }
+
+                if (
+                    selectedLanguage &&
+                    normalizeSearchText(
+                        result.language
+                    ) !==
+                        selectedLanguage
+                ) {
+                    return false;
+                }
+
+                if (!searchText) {
+                    return true;
+                }
+
+                const searchableText = [
+                    result.studentName,
+                    result.level,
+                    result.language,
+                    result.unitName,
+                    result.lessonGroup,
+                    formatDateTime(
+                        result.createdAt
+                    ),
+                    `${result.score}/${result.totalQuestions}`,
+                    `${result.percentage}%`,
+                ]
+                    .map(
+                        normalizeSearchText
+                    )
+                    .join(" ");
+
+                return searchableText.includes(
+                    searchText
+                );
             }
-
-            if (
-                selectedLanguage &&
-                normalizeSearchText(
-                    result.language
-                ) !== selectedLanguage
-            ) {
-                return false;
-            }
-
-            if (!searchText) {
-                return true;
-            }
-
-            const searchableText = [
-                result.studentName,
-                result.level,
-                result.language,
-                result.unitName,
-                result.lessonGroup,
-                formatDateTime(
-                    result.createdAt
-                ),
-                `${result.score}/${result.totalQuestions}`,
-                `${result.percentage}%`,
-            ]
-                .map(normalizeSearchText)
-                .join(" ");
-
-            return searchableText.includes(
-                searchText
-            );
-        });
+        );
 
     return sortResults(
         filteredResults,
@@ -742,7 +940,9 @@ function sortResults(
     results,
     sortMode
 ) {
-    const sortedResults = [...results];
+    const sortedResults = [
+        ...results,
+    ];
 
     const getTime = (result) => {
         const time = new Date(
@@ -790,7 +990,8 @@ function sortResults(
                         second.studentName,
                         undefined,
                         {
-                            sensitivity: "base",
+                            sensitivity:
+                                "base",
                         }
                     ) ||
                     getTime(second) -
@@ -818,11 +1019,15 @@ function renderResults() {
     const fragment =
         document.createDocumentFragment();
 
-    filteredResults.forEach((result) => {
-        fragment.append(
-            createResultRow(result)
-        );
-    });
+    filteredResults.forEach(
+        (result) => {
+            fragment.append(
+                createResultRow(
+                    result
+                )
+            );
+        }
+    );
 
     elements.resultsBody.replaceChildren(
         fragment
@@ -848,8 +1053,10 @@ function renderResults() {
 function clearFilters() {
     elements.searchInput.value = "";
     elements.levelFilter.value = "";
-    elements.languageFilter.value = "";
-    elements.sortSelect.value = "newest";
+    elements.languageFilter.value =
+        "";
+    elements.sortSelect.value =
+        "newest";
 
     renderResults();
     announce("Filters cleared.");
@@ -864,13 +1071,21 @@ async function loadResults() {
     clearDashboardError();
 
     try {
-        allResults = await requestResults();
+        allResults =
+            await requestResults();
 
-        renderLevelFilter(allResults);
-        updateStatistics(allResults);
+        renderLevelFilter(
+            allResults
+        );
+
+        updateStatistics(
+            allResults
+        );
+
         renderResults();
 
-        elements.resultsPanel.hidden = false;
+        elements.resultsPanel.hidden =
+            false;
 
         announce(
             `${allResults.length} ${
@@ -887,13 +1102,25 @@ async function loadResults() {
 
         showDashboardError(message);
 
+        const normalizedMessage =
+            message.toLocaleLowerCase();
+
         if (
-            message
-                .toLocaleLowerCase()
-                .includes("session")
+            normalizedMessage.includes(
+                "session"
+            ) ||
+            normalizedMessage.includes(
+                "jwt"
+            ) ||
+            normalizedMessage.includes(
+                "token"
+            )
         ) {
-            authSession = null;
+            clearAuthentication();
             allResults = [];
+            elements.resultsPanel.hidden =
+                true;
+
             showLoginScreen();
         }
     } finally {
@@ -911,7 +1138,8 @@ async function handleLogin(event) {
     const password =
         elements.passwordInput.value;
 
-    elements.loginError.textContent = "";
+    elements.loginError.textContent =
+        "";
 
     if (!email || !password) {
         elements.loginError.textContent =
@@ -933,7 +1161,8 @@ async function handleLogin(event) {
             password
         );
 
-        elements.passwordInput.value = "";
+        elements.passwordInput.value =
+            "";
 
         showDashboardScreen();
 
@@ -959,7 +1188,8 @@ async function handleLogin(event) {
 
 async function signOut() {
     const accessToken =
-        authSession?.accessToken ?? "";
+        authSession?.accessToken ??
+        "";
 
     setButtonBusy(
         elements.logoutButton,
@@ -989,15 +1219,17 @@ async function signOut() {
             error
         );
     } finally {
-        authSession = null;
+        clearAuthentication();
         allResults = [];
 
         elements.resultsBody.replaceChildren();
-        elements.resultsPanel.hidden = true;
+        elements.resultsPanel.hidden =
+            true;
         elements.error.hidden = true;
         elements.loading.hidden = true;
         elements.emailInput.value = "";
-        elements.passwordInput.value = "";
+        elements.passwordInput.value =
+            "";
 
         updateStatistics([]);
         showLoginScreen();
@@ -1040,7 +1272,9 @@ function togglePasswordVisibility() {
         String(showPassword)
     );
 
-    focusElement(elements.passwordInput);
+    focusElement(
+        elements.passwordInput
+    );
 }
 
 function bindEvents() {
@@ -1096,10 +1330,37 @@ function bindEvents() {
     );
 }
 
+async function restoreTeacherSession() {
+    const savedSession =
+        loadSavedSession();
+
+    if (!savedSession) {
+        showLoginScreen();
+        return;
+    }
+
+    authSession = savedSession;
+    showDashboardScreen();
+
+    try {
+        await getValidAccessToken();
+        await loadResults();
+    } catch (error) {
+        console.warn(
+            "The saved teacher session is no longer valid.",
+            error
+        );
+
+        clearAuthentication();
+        showLoginScreen();
+    }
+}
+
 function initializeTeacherDashboard() {
     bindEvents();
     updateStatistics([]);
-    showLoginScreen();
+
+    void restoreTeacherSession();
 }
 
 initializeTeacherDashboard();
